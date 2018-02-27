@@ -1,19 +1,223 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import TaskForm from './components/TaskForm';
+import Control from './components/Control';
+import TaskList from './components/TaskList';
 
 class App extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            tasks : [],
+            // id : unique
+            // name , status
+            isDisplayForm: false,
+            taskEditing : null,
+            filter: {
+                name:'',
+                status:-1
+            }
+        }
+    }
+
+    // để khi f5 data vẫn lưu lại trình duyệt và đẩy vào state ta cần dùng componentWillMount()
+    // khi refresh laị trình duyệt thì componentWillMOunt sẽ đc gọi duy nhất 1 lần
+    componentWillMount() {
+        // component đc gọi
+        // nên kiểm tra có tồn tại và không trống
+        if (localStorage && localStorage.getItem('tasks')) {
+            var tasks = JSON.parse(localStorage.getItem('tasks'));
+
+            this.setState({
+                tasks : tasks
+            });
+        }
+    }
+    s4() {
+        return Math.floor((1+Math.random()) * 0x10000).toString(16).substring(1);
+    }
+    // hàm tạo mới id
+    generateId() {
+        return this.s4()+this.s4()+this.s4()+ this.s4()+this.s4()+
+        this.s4()+this.s4()+this.s4()+this.s4()+this.s4()+this.s4()+this.s4()+this.s4();
+    }
+
+    // mở form thêm data
+    onToggleForm = () => {
+
+        if(this.state.isDisplayForm && this.state.taskEditing !== null) {
+            this.setState({
+                isDisplayForm : true,
+                taskEditing : null
+                
+            });
+        } else {
+            this.setState({
+                isDisplayForm : !this.state.isDisplayForm,
+                taskEditing : null
+                
+            });
+        }
+    }
+
+    // đóng form thêm data
+    onCloseForm = () => {
+        this.setState({
+            isDisplayForm : false
+        });
+    }
+
+    //mở form
+    onOpenForm = () => {
+        this.setState({
+            isDisplayForm : true
+        });
+    }
+
+    // lưu dữ liệu vào state , chuyển đối dữ liệu  sang dạng json
+    onSubmit = (data) => {
+        var { tasks } = this.state;
+        if(data.id === '') {
+            data.id = this.generateId();
+            tasks.push(data);
+        } else {
+            // Editing
+            var index = this.findIndex(data.id);
+            tasks[index] = data;
+        }
+        this.setState({
+            tasks : tasks,
+            taskEditing : null
+        });
+
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+    // hàm lấy id cập nhật status
+    onUpdateStatus = (id) => {
+        var index = this.findIndex(id);
+        var { tasks } = this.state;
+        
+        if (index !== -1) {
+            tasks[index].status = !tasks[index].status;
+            this.setState({
+                tasks : tasks
+            });
+        }
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    // lấy ra danh sách các task 
+    findIndex = (id) => {
+        var { tasks } = this.state;
+        var result  = -1;
+        tasks.forEach((task, index) => {
+            if (task.id === id) {
+                result =  index;
+            } 
+        });
+        return result;
+    }
+
+    // xóa công việc
+    onDelete = (id) => {
+        var { tasks } = this.state;
+        var index = this.findIndex(id);
+
+        if(index !== -1) {
+            tasks.splice(index, 1);
+            this.setState({
+                tasks: tasks
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+
+            this.onCloseForm();
+        }
+
+    }
+    // cap nhat du lieu
+    onUpdate = (id) => {
+        var { tasks } = this.state;
+        var index = this.findIndex(id);
+        var taskEditing = tasks[index];
+        //console.log(taskEditing);
+        this.setState({
+            taskEditing : taskEditing
+            
+        });
+        this.onOpenForm();
+        //console.log(this.state.taskEditing);
+    }
+    // 
+    onFilter = (filterName, filterStatus) => {
+        filterStatus = parseInt(filterStatus, 10);
+
+        this.setState({
+            filter:{
+                name:filterName.toLowerCase(),
+                status:filterStatus
+            }
+        })
+        
+    }
+
+
   render() {
+
+    var { tasks, taskEditing, filter }  = this.state; // var tasks = this.state.tasks
+    if(filter) {
+        if(filter.name) {
+            tasks = tasks.filter((task) => {
+                return task.name.toLowerCase().indexOf(filter.name) !== -1;
+            });
+        }
+
+        tasks = tasks.filter((task) => {
+            if(filter.status === -1) {
+                return task;
+            } else {
+                return task.status === (filter.status === 1 ? true : false );
+            }
+        });
+    }
+    var isDisplayForm = this.state.isDisplayForm;
+    var isTaskForm = isDisplayForm ? 
+                        <TaskForm onSubmit = {this.onSubmit }  
+                        onCloseForm = { this.onCloseForm }
+                        task = { taskEditing }
+                        /> 
+                    : '';
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+        <div className="container">
+            <div className="text-center">
+                <h1>Quản Lý Công Việc</h1>
+                <hr/>
+            </div>
+            <div className="row mt-15">
+                <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                   { isTaskForm }
+                </div>
+                <div className= { isDisplayForm ? 'col-xs-8 col-sm-8 col-md-8 col-lg-8' : 'col-xs-12 col-sm-12 col-md-12 col-lg-12'}>
+                    <button 
+                        type="button" 
+                        className="btn btn-primary" 
+                        onClick= { this.onToggleForm }
+                    >
+                        <span className="fa fa-plus mr-5"></span>Thêm Công Việc
+                    </button>
+                    <Control />
+                    <div className="row mt-15">
+                        <TaskList  
+                            tasks= { tasks } 
+                            onUpdateStatus= {this.onUpdateStatus }
+                            onDelete = {this.onDelete }
+                            onUpdate = {this.onUpdate }
+                            onFilter = { this.onFilter}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
     );
   }
 }
