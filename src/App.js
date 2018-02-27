@@ -17,7 +17,8 @@ class App extends Component {
             filter: {
                 name:'',
                 status:-1
-            }
+            },
+            keyword:''
         }
     }
 
@@ -161,10 +162,18 @@ class App extends Component {
         
     }
 
+    // chuc nang tim kiem
+    onSearch = (keyword) => {
+        console.log(keyword);
+        this.setState({
+            keyword : keyword.toLowerCase()
+        });
+    }
+
 
   render() {
 
-    var { tasks, taskEditing, filter }  = this.state; // var tasks = this.state.tasks
+    var { tasks, taskEditing, filter, keyword}  = this.state; // var tasks = this.state.tasks
     if(filter) {
         if(filter.name) {
             tasks = tasks.filter((task) => {
@@ -178,6 +187,12 @@ class App extends Component {
             } else {
                 return task.status === (filter.status === 1 ? true : false );
             }
+        });
+    }
+
+    if(keyword) {
+        tasks = tasks.filter((task) => {
+            return task.name.toLowerCase().indexOf(keyword) !== -1;
         });
     }
     var isDisplayForm = this.state.isDisplayForm;
@@ -205,7 +220,7 @@ class App extends Component {
                     >
                         <span className="fa fa-plus mr-5"></span>Thêm Công Việc
                     </button>
-                    <Control />
+                    <Control onSearch={this.onSearch} />
                     <div className="row mt-15">
                         <TaskList  
                             tasks= { tasks } 
