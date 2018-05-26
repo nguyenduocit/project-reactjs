@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import TaskItem from './TaskItem';
+// để lấy được tasks từ store thì cần import 
+import {connect} from 'react-redux';
 
 class TaskList extends Component {
 
@@ -24,7 +26,7 @@ class TaskList extends Component {
         });
     }
 	render() {
-
+        console.log(this.props.todos);
 		var { tasks } = this.props; // var task = this.props.tasks
         var { filterName, filterStatus } = this.state;
 
@@ -84,4 +86,10 @@ class TaskList extends Component {
 	}
 }
 
-export default TaskList;
+const mapStateToProps = (state) => {
+    return {
+        todos : state.tasks
+    }
+}
+
+export default connect(mapStateToProps, null)(TaskList);
