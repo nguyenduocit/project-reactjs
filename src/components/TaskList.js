@@ -28,6 +28,7 @@ class TaskList extends Component {
 		var { tasks } = this.props; // var task = this.props.tasks
         var { filterName, filterStatus } = this.state;
 
+        // vòng lặp lấy từng phần tử 
 		var elmTasks = tasks.map((task, index) => {
 			return <TaskItem 
 				task = { task } 

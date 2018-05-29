@@ -29,7 +29,9 @@ class TaskForm extends Component {
     }
 
     onSubmit = (event) => {
+        // chặn load trang
         event.preventDefault();
+        // gửi data ra ngoài
         this.props.onSubmit(this.state);
 
         // Cancel anh Close From

@@ -30,6 +30,7 @@ class App extends Component {
         // component đc gọi
         // nên kiểm tra có tồn tại và không trống
         if (localStorage && localStorage.getItem('tasks')) {
+            // gán vào biến chuyển về dạng oject json
             var tasks = JSON.parse(localStorage.getItem('tasks'));
 
             this.setState({
@@ -80,6 +81,7 @@ class App extends Component {
 
     // lưu dữ liệu vào state , chuyển đối dữ liệu  sang dạng json
     onSubmit = (data) => {
+        // lấy danh sách các task trên state 
         var { tasks } = this.state;
         if(data.id === '') {
             data.id = this.generateId();
@@ -98,8 +100,10 @@ class App extends Component {
     }
     // hàm lấy id cập nhật status
     onUpdateStatus = (id) => {
+        // 
         var tasks = this.state.tasks;
         //var index = this.findIndex(id);
+        //tạo ra biên index 
         var index = findIndex(tasks, (task) => {
             return task.id === id;
         });
@@ -116,8 +120,10 @@ class App extends Component {
 
     // lấy ra danh sách các task 
     findIndex = (id) => {
+        // lấy danh sách các tasks 
         var { tasks } = this.state;
         var result  = -1;
+        // duyệt bằng foreach
         tasks.forEach((task, index) => {
             if (task.id === id) {
                 result =  index;
@@ -132,10 +138,13 @@ class App extends Component {
         var index = this.findIndex(id);
 
         if(index !== -1) {
+            // xóa phần tử thuộc tasks
             tasks.splice(index, 1);
+            
             this.setState({
                 tasks: tasks
             });
+            // chuyển về kiểu string để dễ lưu trữ
             localStorage.setItem('tasks', JSON.stringify(tasks));
 
             this.onCloseForm();
@@ -170,7 +179,7 @@ class App extends Component {
 
     // chuc nang tim kiem
     onSearch = (keyword) => {
-        //console.log(keyword);
+        
         this.setState({
             keyword : keyword.toLowerCase()
         });
@@ -185,7 +194,7 @@ class App extends Component {
     }
 
   render() {
-
+    // khởi tạo biến lưu các tasks
     var { 
             tasks, 
             taskEditing, 
@@ -194,9 +203,11 @@ class App extends Component {
             sortBy,
             sortValue
         }  = this.state; // var tasks = this.state.tasks
+
     if(filter) {
         if(filter.name) {
             tasks = tasks.filter((task) => {
+                // chuyển về ác ký tự thư
                 return task.name.toLowerCase().indexOf(filter.name) !== -1;
             });
         }
