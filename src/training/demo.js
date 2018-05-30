@@ -1,4 +1,4 @@
-//tạo store
+//tạo store 
 import { createStore } from 'redux';
 
 // khoi tao state ban dau
@@ -14,9 +14,11 @@ var inittialState = {
 var myReducer = (state = inittialState, action) => {
     if(action.type === 'TOGGLE_STATUS') {
         state.status = !state.status;
+        return state;
     }
 
     if(action.type === 'SORT') {
+        console.log(action);
         var { by , value } = action.sort; //by = action.by
         var { status } = state; // status = state.status
     //    state.sort.by = action.sort.by;
@@ -35,6 +37,7 @@ var myReducer = (state = inittialState, action) => {
         }
     }
 }
+
 //tạo ra store từ createStore
 const store = createStore(myReducer);
 console.log('Default',store.getState());
