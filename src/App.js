@@ -4,13 +4,13 @@ import TaskForm from './components/TaskForm';
 import Control from './components/Control';
 import TaskList from './components/TaskList';
 import { findIndex, filter } from 'lodash';
-import Demo from './trainning/demo';
+
 class App extends Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			tasks : [],
+			
 			// id : unique
 			// name , status
 			isDisplayForm: false,
@@ -24,29 +24,7 @@ class App extends Component {
 			sortValue: 1
 		}
 	}
-
-	// để khi f5 data vẫn lưu lại trình duyệt và đẩy vào state ta cần dùng componentWillMount()
-	// khi refresh laị trình duyệt thì componentWillMOunt sẽ đc gọi duy nhất 1 lần
-	componentWillMount() {
-		// component đc gọi
-		// nên kiểm tra có tồn tại và không trống
-		if (localStorage && localStorage.getItem('tasks')) {
-			var tasks = JSON.parse(localStorage.getItem('tasks'));
-
-			this.setState({
-				tasks : tasks
-			});
-		}
-	}
-	s4() {
-		return Math.floor((1+Math.random()) * 0x10000).toString(16).substring(1);
-	}
-	// hàm tạo mới id
-	generateId() {
-		return this.s4()+this.s4()+this.s4()+ this.s4()+this.s4()+
-		this.s4()+this.s4()+this.s4()+this.s4()+this.s4()+this.s4()+this.s4()+this.s4();
-	}
-
+	
 	// mở form thêm data
 	onToggleForm = () => {
 
@@ -188,55 +166,55 @@ class App extends Component {
   render() {
 
 	var { 
-			tasks, 
+			
 			taskEditing, 
 			filter, 
 			keyword,
 			sortBy,
 			sortValue
 		}  = this.state; // var tasks = this.state.tasks
-	if(filter) {
-		if(filter.name) {
-			tasks = tasks.filter((task) => {
-				return task.name.toLowerCase().indexOf(filter.name) !== -1;
-			});
-		}
+	// if(filter) {
+	// 	if(filter.name) {
+	// 		tasks = tasks.filter((task) => {
+	// 			return task.name.toLowerCase().indexOf(filter.name) !== -1;
+	// 		});
+	// 	}
 
-		tasks = tasks.filter((task) => {
-			if(filter.status === -1) {
-				return task;
-			} else {
-				return task.status === (filter.status === 1 ? true : false );
-			}
-		});
-	}
-	if (sortBy === 'name') {
+	// 	tasks = tasks.filter((task) => {
+	// 		if(filter.status === -1) {
+	// 			return task;
+	// 		} else {
+	// 			return task.status === (filter.status === 1 ? true : false );
+	// 		}
+	// 	});
+	// }
+	// if (sortBy === 'name') {
 
-		tasks.sort((a,b) =>{
-			if(a.name > b.name) return sortValue;
-			else if(a.name < b.name) return -sortValue;
-			else return 0
-		});
-	} else {
+	// 	tasks.sort((a,b) =>{
+	// 		if(a.name > b.name) return sortValue;
+	// 		else if(a.name < b.name) return -sortValue;
+	// 		else return 0
+	// 	});
+	// } else {
 
-		tasks.sort((a,b) =>{
-			if(a.status > b.status) return -sortValue;
-			else if(a.status < b.status) return sortValue;
-			else return 0
-		});
+	// 	tasks.sort((a,b) =>{
+	// 		if(a.status > b.status) return -sortValue;
+	// 		else if(a.status < b.status) return sortValue;
+	// 		else return 0
+	// 	});
 
-	}
+	// }
 	
 
-	if(keyword) {
-		tasks = tasks.filter((task) => {
-			return task.name.toLowerCase().indexOf(keyword) !== -1;
-		});
+	// if(keyword) {
+	// 	tasks = tasks.filter((task) => {
+	// 		return task.name.toLowerCase().indexOf(keyword) !== -1;
+	// 	});
 
-		// tasks = filter(tasks, (task) => {
-		//    return  task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
-		// });
-	}
+	// 	// tasks = filter(tasks, (task) => {
+	// 	//    return  task.name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+	// 	// });
+	// }
 
 
 	var isDisplayForm = this.state.isDisplayForm;
@@ -272,7 +250,7 @@ class App extends Component {
 					/>
 					<div className="row mt-15">
 						<TaskList  
-							tasks= { tasks } 
+							
 							onUpdateStatus= {this.onUpdateStatus }
 							onDelete = {this.onDelete }
 							onUpdate = {this.onUpdate }

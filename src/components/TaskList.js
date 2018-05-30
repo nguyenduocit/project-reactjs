@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import TaskItem from './TaskItem';
+// để lấy được giá trị trên store 
+import { connect } from 'react-redux';
 
 class TaskList extends Component {
 
@@ -10,6 +12,8 @@ class TaskList extends Component {
             filterStatus: -1, // all -1, active: 1, deactive:0
         }
     }
+
+    // tại task list lên store lấy 
 
     onChange = (event) =>{
         var target = event.target;
@@ -24,7 +28,7 @@ class TaskList extends Component {
         });
     }
 	render() {
-
+        
 		var { tasks } = this.props; // var task = this.props.tasks
         var { filterName, filterStatus } = this.state;
 
@@ -83,5 +87,10 @@ class TaskList extends Component {
 		);
 	}
 }
-
-export default TaskList;
+// lên store lấy danh sách 
+const mapStateToProps = (state) => {
+    return {
+        tasks : state.tasks
+    }
+}
+export default connect(mapStateToProps, null)(TaskList);
