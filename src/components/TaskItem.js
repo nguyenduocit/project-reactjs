@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from './../actions/index';
 
 class TaskItem extends Component {
 
@@ -9,11 +11,13 @@ class TaskItem extends Component {
 	// gửi ra ngoài biến id
 	onDelete = () => {
 		this.props.onDelete(this.props.task.id);
+		this.props.onCloseForm();
 	}
 
 	// cap nhat du lieu
 	onUpdate = () => {
-		this.props.onUpdate(this.props.task.id);
+		this.props.onOpenForm();
+		this.props.onUpdate(this.props.task);
 	}
 
 	render() {
@@ -52,5 +56,29 @@ class TaskItem extends Component {
 		);
 	}
 }
+const mapStateToProps = () => {
+	return {};
+}
 
-export default TaskItem;
+const mapDispatchToProps = (dispatch, props) => {
+	return {
+		onUpdateStatus : (id) => {
+			dispatch(actions.updateStatus(id));
+		},
+		onDelete : (id) => {
+			dispatch(actions.onDelete(id));
+		},
+		onOpenForm : () => {
+			dispatch(actions.openForm());
+		},
+		onCloseForm : () => {
+			dispatch(actions.closeForm());
+
+		},
+		onUpdate : (task) => {
+			dispatch(actions.onUpdate(task));
+		}
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskItem);

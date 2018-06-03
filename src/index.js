@@ -10,11 +10,11 @@ import myReducer from './reducers/index';
 
 import {Provider} from 'react-redux';
 // khởi tạo store
-const store = createStore(myReducer);
+const store = createStore(myReducer,  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 ReactDOM.render(
     <Provider store = {store}>
         <App />
-    </Provider>, 
+    </Provider>,
     document.getElementById('root'));
 registerServiceWorker();

@@ -3,17 +3,16 @@ import './App.css';
 import TaskForm from './components/TaskForm';
 import Control from './components/Control';
 import TaskList from './components/TaskList';
-import { findIndex, filter } from 'lodash';
+import { connect } from 'react-redux';
+import * as actions from './actions/index';
 
 class App extends Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			
 			// id : unique
 			// name , status
-			isDisplayForm: false,
 			taskEditing : null,
 			filter: {
 				name:'',
@@ -27,100 +26,20 @@ class App extends Component {
 	
 	// mở form thêm data
 	onToggleForm = () => {
-
-		if(this.state.isDisplayForm && this.state.taskEditing !== null) {
-			this.setState({
-				isDisplayForm : true,
-				taskEditing : null
-				
-			});
-		} else {
-			this.setState({
-				isDisplayForm : !this.state.isDisplayForm,
-				taskEditing : null
-				
-			});
-		}
+		this.props.onToggleForm();
+		this.onClearForm();
 	}
 
 	// đóng form thêm data
 	onCloseForm = () => {
-		this.setState({
-			isDisplayForm : false
-		});
+		this.props.onCloseForm();
 	}
 
 	//mở form
 	onOpenForm = () => {
-		this.setState({
-			isDisplayForm : true
-		});
+		this.props.onOpenForm();
 	}
 
-	// lưu dữ liệu vào state , chuyển đối dữ liệu  sang dạng json
-	onSubmit = (data) => {
-		var { tasks } = this.state;
-		if(data.id === '') {
-			data.id = this.generateId();
-			tasks.push(data);
-		} else {
-			// Editing
-			var index = this.findIndex(data.id);
-			tasks[index] = data;
-		}
-		this.setState({
-			tasks : tasks,
-			taskEditing : null
-		});
-
-		localStorage.setItem('tasks', JSON.stringify(tasks));
-	}
-	// hàm lấy id cập nhật status
-	onUpdateStatus = (id) => {
-		var tasks = this.state.tasks;
-		//var index = this.findIndex(id);
-		var index = findIndex(tasks, (task) => {
-			return task.id === id;
-		});
-		var { tasks } = this.state;
-		
-		if (index !== -1) {
-			tasks[index].status = !tasks[index].status;
-			this.setState({
-				tasks : tasks
-			});
-		}
-		localStorage.setItem('tasks', JSON.stringify(tasks));
-	}
-
-	// lấy ra danh sách các task 
-	findIndex = (id) => {
-		var { tasks } = this.state;
-		var result  = -1;
-		tasks.forEach((task, index) => {
-			if (task.id === id) {
-				result =  index;
-			} 
-		});
-		return result;
-	}
-
-	// xóa công việc
-	onDelete = (id) => {
-		var { tasks } = this.state;
-		var index = this.findIndex(id);
-
-		if(index !== -1) {
-			tasks.splice(index, 1);
-			this.setState({
-				tasks: tasks
-			});
-			localStorage.setItem('tasks', JSON.stringify(tasks));
-
-			this.onCloseForm();
-		}
-
-	}
 	// cap nhat du lieu
 	onUpdate = (id) => {
 		var { tasks } = this.state;
@@ -163,16 +82,25 @@ class App extends Component {
 		});
 	}
 
+	onClear = () => {
+        this.setState({
+            id:'',
+            name : '',
+            status: false
+
+        })
+    }
+
   render() {
 
 	var { 
-			
-			taskEditing, 
 			filter, 
 			keyword,
 			sortBy,
 			sortValue
 		}  = this.state; // var tasks = this.state.tasks
+
+	var { actionForm } =  this.props;
 	// if(filter) {
 	// 	if(filter.name) {
 	// 		tasks = tasks.filter((task) => {
@@ -216,14 +144,6 @@ class App extends Component {
 	// 	// });
 	// }
 
-
-	var isDisplayForm = this.state.isDisplayForm;
-	var isTaskForm = isDisplayForm ? 
-						<TaskForm onSubmit = {this.onSubmit }  
-						onCloseForm = { this.onCloseForm }
-						task = { taskEditing }
-						/> 
-					: '';
 	return (
 		<div className="container">
 			<div className="text-center">
@@ -232,9 +152,9 @@ class App extends Component {
 			</div>
 			<div className="row mt-15">
 				<div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-				   { isTaskForm }
+				<TaskForm/> 
 				</div>
-				<div className= { isDisplayForm ? 'col-xs-8 col-sm-8 col-md-8 col-lg-8' : 'col-xs-12 col-sm-12 col-md-12 col-lg-12'}>
+				<div className= { actionForm ? 'col-xs-8 col-sm-8 col-md-8 col-lg-8' : 'col-xs-12 col-sm-12 col-md-12 col-lg-12'}>
 					<button 
 						type="button" 
 						className="btn btn-primary" 
@@ -250,10 +170,6 @@ class App extends Component {
 					/>
 					<div className="row mt-15">
 						<TaskList  
-							
-							onUpdateStatus= {this.onUpdateStatus }
-							onDelete = {this.onDelete }
-							onUpdate = {this.onUpdate }
 							onFilter = { this.onFilter}
 						/>
 					</div>
@@ -264,4 +180,28 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+	return {
+		actionForm: state.actionForm
+	};
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+	return {
+		onToggleForm : () => {
+			dispatch(actions.toggleForm());
+		},
+		onOpenForm : () => {
+			dispatch(actions.openForm());
+		},
+		onCloseForm : () => {
+			dispatch(actions.closeForm());
+
+		},
+		onClearForm: (task) => {
+			dispatch(actions.onUpdate(task));
+		}
+
+	};
+}
+export default connect(mapStateToProps, mapDispatchToProps)(App);

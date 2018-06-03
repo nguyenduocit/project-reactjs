@@ -35,22 +35,17 @@ class TaskForm extends Component {
         // this.props.onSubmit(this.state);
         this.props.onAddTask(this.state);
         // Cancel anh Close From
-        this.onClear();
-        this.onCloseForm();
+        this.props.onCloseForm({
+            id: '',
+            name: '',
+            status: false
+        });
         
         
     }
 
     onCloseForm = () => {
         this.props.onCloseForm()
-    }
-
-    onClear = () => {
-        this.setState({
-            name : '',
-            status: false
-
-        })
     }
 
     // cap nhat lai state 
@@ -69,17 +64,18 @@ class TaskForm extends Component {
 
     // componentkhi mởi lên rồi vẫn nhận được props
     componentWillReceiveProps(nextProps) {
+        console.log(nextProps);
         // kiểm tra nextProps
-        if(nextProps && nextProps.task) {
+        if(nextProps && nextProps.updateItem) {
 
             this.setState({
-                id: nextProps.task.id,
-                name: nextProps.task.name,
-                status: nextProps.task.status
+                id: nextProps.updateItem.id,
+                name: nextProps.updateItem.name,
+                status: nextProps.updateItem.status
 
            });
 
-        } else if(!nextProps.task) {
+        } else if(!nextProps.updateItem) {
             this.setState({
                 id:'',
                 name:'',
@@ -88,16 +84,14 @@ class TaskForm extends Component {
         }
     }
 
-    c
-
   render() {
 
-    var { id } = this.state;
+    if(!this.props.actionForm) return null;
     return (
         <div className="panel panel-warning">
             <div className="panel-heading">
                 <h3 className="panel-title">
-                    { id !== '' ? 'Cập Nhật Công Việc' : 'Thêm Công Việc'}
+                    { this.state.id !== '' ? 'Cập Nhật Công Việc' : 'Thêm Công Việc'}
                 </h3>
                 <span 
                     className = 'fa fa-times-circle text-right mg-t-17'
@@ -130,7 +124,9 @@ class TaskForm extends Component {
                     </select>
                     <br/>
                     <div className="text-center">
-                        <button type="submit" className="btn btn-warning">Thêm</button>&nbsp;
+                        <button type="submit" className="btn btn-warning">
+                        { this.state.id !== '' ? 'Cập nhật' : 'Thêm'}
+                        </button>&nbsp;
                         <button 
                             type="reset" 
                             className="btn btn-danger"
@@ -146,15 +142,20 @@ class TaskForm extends Component {
 
 const mapStateToProps = state => {
     return {
-
+        actionForm: state.actionForm,
+        updateItem: state.updateItem
     }
 }
 
 const mapDispatchToProps = (dispatch, props) => {
     return {
         onAddTask : (task) => {
-            dispatch(actions.addTask(task));
-        }
+            dispatch(actions.onClear(task));
+        },
+        onCloseForm : () => {
+			dispatch(actions.closeForm());
+
+        },
     }
 }
 
