@@ -6,3 +6,4 @@ export const OPEN_FORM     = 'OPEN_FORM';
 export const UPDATE_STATUS = 'UPDATE_STATUS';
 export const ON_DELETE     = 'ON_DELETE';
 export const ON_UPDATE     = 'ON_UPDATE';
+export const FILTER_TABLE = 'FILTER_TABLE';

@@ -5,7 +5,6 @@ class Sort extends Component {
     onClick = (sortBy, sortValue) => {
 
         this.props.onSort(sortBy, sortValue);
-        
     }
 	render() {
 		return (

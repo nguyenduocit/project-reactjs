@@ -33,7 +33,6 @@ var myReducer = (state = initialState, action) => {
                 name : action.task.name,
                 status : action.task.status === "true" ? true : false
             }
-            console.log(task);
             if(!action.task.id) {
                 task.id = generateId(),
                 // lưu dữ liệu vào state , chuyển đối dữ liệu  sang dạng json

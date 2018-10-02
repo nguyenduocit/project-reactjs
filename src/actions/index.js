@@ -54,3 +54,11 @@ export const onUpdate = (task) => {
         task,
     }
 }
+// xử lý tìm kiếm 
+export const filterTask =(filter) => {
+
+    return {
+        type:  types.FILTER_TABLE,
+        filter // filter : filter -> filterName, filterStatus
+    }
+}

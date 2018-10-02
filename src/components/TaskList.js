@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TaskItem from './TaskItem';
 // để lấy được giá trị trên store 
 import { connect } from 'react-redux';
+import * as actions from './../actions/index';
 
 class TaskList extends Component {
 
@@ -19,10 +20,15 @@ class TaskList extends Component {
         var target = event.target;
         var name = target.name;
         var value = target.value;
-        this.props.onFilter(
+        // this.props.onFilter(
+        //     name === 'filterName' ? value : this.state.filterName,
+        //     name === 'filterStatus' ? value : this.state.filterStatus
+        // );
+        this.props.onFilterTable(
             name === 'filterName' ? value : this.state.filterName,
             name === 'filterStatus' ? value : this.state.filterStatus
         );
+
         this.setState({
             [name] : value
         });
@@ -90,4 +96,13 @@ const mapStateToProps = (state) => {
         tasks : state.tasks
     }
 }
-export default connect(mapStateToProps, null)(TaskList);
+
+const mapDispatchToProps = (dispatch, props) => {
+	return {
+		onFilterTable : (filter) => {
+            dispatch(actions.filterTask(filter));
+        }
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskList);

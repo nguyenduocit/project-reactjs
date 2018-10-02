@@ -13,7 +13,6 @@ class App extends Component {
 		this.state = {
 			// id : unique
 			// name , status
-			taskEditing : null,
 			filter: {
 				name:'',
 				status:-1
